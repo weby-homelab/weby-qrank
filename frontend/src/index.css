@@ -694,12 +694,13 @@ button[type="submit"]:active:not(:disabled),
 
 .footer-credits a {
   color: var(--text-muted);
-  text-decoration: none;
+  text-decoration: none !important;
   transition: color 0.2s;
 }
 
 .footer-credits a:hover {
   color: var(--accent-primary);
+  text-decoration: none !important;
 }
 
 /* --- Owner (Creator) Special Placement --- */
