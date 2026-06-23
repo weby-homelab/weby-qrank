@@ -1,27 +1,31 @@
 # Karma 2 Community App 🏆 (Docker Edition)
 
 <p align="center">
-  <img src="Karma-2-Screen1.jpg" width="800" alt="Karma 2 Dashboard" />
-</p>
-<p align="center">
-  <img src="Karma-2-Screen2.jpg" width="800" alt="Karma 2 Mobile Leaderboard" />
-</p>
-<p align="center">
-  <img src="Karma-2-Screen3.jpg" width="800" alt="Karma 2 Score Breakdown" />
+  **English** | [Українська](README.ua.md)
 </p>
 
-Сучасний Telegram Mini App для гейміфікації спільноти. Ця версія (Karma 2) оптимізована для роботи в **Docker**-середовищі, підтримує легке горизонтальне масштабування (multi-tenancy), віддачу статичного React-застосунку та використовує **вдосконалену формулу розрахунку карми** для запобігання накруткам та спаму.
+<p align="center">
+  <img src="Karma-2-Screen1.png" width="800" alt="Karma 2 Dashboard" />
+</p>
+<p align="center">
+  <img src="Karma-2-Screen2.png" width="800" alt="Karma 2 Mobile Leaderboard" />
+</p>
+<p align="center">
+  <img src="Karma-2-Screen3.png" width="800" alt="Karma 2 Score Breakdown" />
+</p>
 
-![Karma 2 Community App Banner](https://img.shields.io/badge/Status-Active-success) ![License](https://img.shields.io/badge/License-MIT-blue) ![Stack](https://img.shields.io/badge/Stack-Node.js%20|%20Docker%20|%20SQLite-blueviolet)
+A modern Telegram Mini App for community gamification. This version (Karma 2) is optimized for **Docker** environments, supports easy horizontal scaling (multi-tenancy), serves a static React app, and uses an **advanced karma calculation formula** to prevent boosting and spam.
+
+![Karma 2 Community App Banner](https://img.shields.io/badge/Status-Active-success)  ![License](https://img.shields.io/badge/License-MIT-blue)  ![Stack](https://img.shields.io/badge/Stack-Node.js%20|%20Docker%20|%20SQLite-blueviolet)
 
 ---
 
-## 🏗️ Архітектура Системи (Docker)
+## 🏗️ System Architecture (Docker)
 
 ```mermaid
 graph TD
     %% Nodes definition
-    User((👤 Користувач))
+    User((👤 User))
     TG[Telegram App]
     
     subgraph "Docker Host"
@@ -35,7 +39,7 @@ graph TD
     end
 
     %% Connections
-    User -->|Взаємодія / Реакції| TG
+    User -->|Interaction / Reactions| TG
     TG <-->|Events / Commands / UI| Proxy
     Proxy <--> Node
     Node <-->|Read/Write| DB
@@ -54,60 +58,60 @@ graph TD
 
 ---
 
-## ⚖️ Алгоритм та Формули Карма-2 (Scoring Rules)
+## ⚖️ Scoring Algorithm & Formulas (Karma-2)
 
-Для забезпечення справедливого рейтингу та запобігання змовам користувачів, Karma 2 поєднує декілька прогресивних математичних підходів:
+To ensure a fair leaderboard and prevent user collusion, Karma 2 combines several progressive mathematical approaches:
 
-### 1. Баланс якості та кількості (Quality Index)
-Запобігає накруткам через масове надсилання повідомлень (флуд / спам). Розраховується індекс якості $Q \in (0, 1]$:
+### 1. Balance of Quality and Quantity (Quality Index)
+Prevents boosting through mass messaging (flood / spam). A quality index $Q \in (0, 1]$ is calculated:
 
 $$Q = \frac{M_{\text{engaged}} + 1}{M_{\text{total}} + 1}$$
 
-- **$M_{\text{total}}$**: загальна кількість повідомлень користувача.
-- **$M_{\text{engaged}}$**: кількість повідомлень, які отримали хоча б одну реакцію або відповідь (reply).
-- *Приклад:* Якщо користувач надіслав 10 повідомлень і на 8 відреагували, то $Q = 9/11 \approx 0.82$. Якщо надіслав 1000 і відреагували на 8, то $Q = 9/1001 \approx 0.009$, що нівелює його рейтинг.
+- **$M_{\text{total}}$**: total number of user messages.
+- **$M_{\text{engaged}}$**: number of messages that received at least one reaction or reply.
+- *Example:* If a user sent 10 messages and 8 were reacted to, then $Q = 9/11 \approx 0.82$. If they sent 1000 messages and only 8 were reacted to, then $Q = 9/1001 \approx 0.009$, which nullifies their rating.
 
-### 2. Запобігання змовам (Pairwise Discounting)
-Якщо двоє користувачів (А і Б) домовилися взаємно "прокачувати" один одного, кожна наступна реакція від А до Б матиме меншу вагу за гармонійною шкалою:
+### 2. Collusion Prevention (Pairwise Discounting)
+If two users (A and B) mutually boost each other, each subsequent reaction from A to B will have decaying weight on a harmonic scale:
 
 $$W_{\text{pairwise}} = \frac{1}{k}$$
 
-де $k$ — це порядковий номер реакції від користувача А до користувача Б.
-- **1-ша** реакція: вага $1.0$.
-- **2-га** реакція: вага $0.5$.
-- **100-та** реакція: вага $0.01$.
-Сумарний вплив А на Б обмежений гармонійним числом $H_k \approx \ln(k) + \gamma$.
+where $k$ is the sequence number of the reaction from user A to user B.
+- **1st** reaction: weight $1.0$.
+- **2nd** reaction: weight $0.5$.
+- **100th** reaction: weight $0.01$.
+The total influence of A on B is limited by the harmonic number $H_k \approx \ln(k) + \gamma$.
 
-### 3. Авторитет реактора (Reactor Reputation)
-Реакція від користувача з високою кармою важить більше, ніж від новачка з нульовою кармою:
+### 3. Reactor Reputation
+A reaction from a user with high karma weighs more than from a newcomer with zero karma:
 
 $$W_{\text{reactor}} = \log_{10}(10 + K_{\text{weighted}})$$
 
-- Користувач з кармою $0$ має множник $1.0$.
-- Користувач з кармою $90$ має множник $2.0$.
+- A user with karma $0$ has a multiplier of $1.0$.
+- A user with karma $90$ has a multiplier of $2.0$.
 
-### 4. Вага кожної дії
-| Дія | Базова Вага | Опис |
+### 4. Weight of Each Action
+| Action | Base Weight | Description |
 | :--- | :--- | :--- |
-| **Надсилання повідомлення** | $+0.50$ | Заохочення до спілкування (масштабується індексом $Q$). |
-| **Отримання відповіді (Reply)** | $+1.00$ | Показник того, що повідомлення викликало дискусію. |
-| **Реакція "Guru"** (🔥, 👍, 💯, 🤝, ❤️) | $+2.00$ | Корисний чи авторитетний контент. |
-| **Реакція "Flooder"** (😁, 🤣, 🤪) | $+1.50$ | Гумор, флуд, емоції. |
-| **Реакція "Skeptic"** (🤔, 👀, 🤷‍♂️, 🤯) | $+1.00$ | Аналітика, сумніви. |
-| **Негативна реакція** (👎, 🤮, 💩) | $-1.00$ | Спам, дизлайк. |
+| **Sending message** | $+0.50$ | Encouraging communication (scaled by Q index). |
+| **Receiving reply (Reply)** | $+1.00$ | Indicator that the message sparked a discussion. |
+| **Reaction "Guru"** (🔥, 👍, 💯, 🤝, ❤️) | $+2.00$ | Useful or authoritative content. |
+| **Reaction "Flooder"** (😁, 🤣, 🤪) | $+1.50$ | Humor, flood, emotions. |
+| **Reaction "Skeptic"** (🤔, 👀, 🤷‍♂️, 🤯) | $+1.00$ | Analytics, doubts. |
+| **Negative reaction** (👎, 🤮, 💩) | $-1.00$ | Spam, dislike. |
 
 ---
 
-## 🚀 Швидкий старт (Docker Compose)
+## 🚀 Quick Start (Docker Compose)
 
-Найпростіший спосіб розгорнути додаток:
+The easiest way to deploy the application:
 
-1.  **Створіть робочу директорію:**
+1.  **Create a working directory:**
     ```bash
     mkdir karma-2-app && cd karma-2-app
     ```
 
-2.  **Створіть `docker-compose.yml`:**
+2.  **Create a `docker-compose.yml` file:**
     ```yaml
     version: '3.8'
     services:
@@ -118,63 +122,63 @@ $$W_{\text{reactor}} = \log_{10}(10 + K_{\text{weighted}})$$
         ports:
           - "3015:3000"
         environment:
-          - BOT_TOKEN=Ваш_Telegram_Бот_Токен
+          - BOT_TOKEN=Your_Telegram_Bot_Token
           - DB_PATH=/app/backend/data/karma.db
           - TRUST_PROXY=true
         volumes:
           - ./data:/app/backend/data
     ```
 
-3.  **Запустіть:**
+3.  **Run the container:**
     ```bash
     docker compose up -d
     ```
-Додаток буде доступний на порту 3015. Всі дані надійно зберігаються у папці `./data/`.
+The application will be available on port 3015. All data is securely stored in the `./data/` directory.
 
 ---
 
-## ⚙️ Адмін-панель
-Налаштування додатка зручно здійснюється через вбудовану адмін-панель за адресою `/admin`.
+## ⚙️ Admin Panel
+Configuration is easily done via the built-in admin panel at `/admin`.
 
-![Адмін-панель](karma-community-app-admin-panel.png)
+![Admin Panel](karma-community-app-admin-panel.png)
 
-**Доступні налаштування:**
-*   **Заголовок сайту:** (напр. *🏆 Рейтинг KRUHLYK Community*)
+**Available settings:**
+*   **Site Title:** (e.g. *🏆 KRUHLYK Community Leaderboard*)
 *   **Telegram Bot Token:** `123456789:ABCdefGHIjklmNOPqrsTUVwxyz`
-*   **Chat ID (опціонально):** `-100123456789`
-*   **WebApp URL (для кнопки Start):** `https://kruhlyk.srvrs.top/`
-*   **Telegram ID власника чату:** (для відображення на почесному місці у топі рейтингу)
-*   **Змінити пароль Адміна:** (залиште пустим, якщо не треба)
-*   **Імпорт Даних:** Можливість завантажити бекап карми у JSON-форматі з повною ретроспективною калькуляцією карми за новими правилами.
+*   **Chat ID (optional):** `-100123456789`
+*   **WebApp URL (for the Start button):** `https://kruhlyk.srvrs.top/`
+*   **Telegram ID of the chat owner:** (for prominent display at the top of the leaderboard)
+*   **Change Admin Password:** (leave empty if not needed)
+*   **Data Import:** Ability to upload a karma backup in JSON format with full retrospective karma calculation based on the new rules.
 
 ---
 
-## 🤖 Створення, налаштування та інтеграція Telegram-бота
+## 🤖 Telegram Bot Creation, Setup & Integration
 
-Щоб карма за реакції та репліки нараховувалася коректно, бот повинен бути правильно створений, налаштований та доданий у групу:
+For karma to be calculated correctly, the bot must be properly created, configured, and added to the group:
 
-### 1. Створення бота у BotFather
-1. Знайдіть у Telegram офіційного бота **@BotFather** та почніть діалог.
-2. Надішліть команду `/newbot` та слідуйте інструкціям.
-3. Скопіюйте отриманий **API Token**.
+### 1. Creating a bot via BotFather
+1. Find the official **@BotFather** on Telegram and start a chat.
+2. Send the `/newbot` command and follow the instructions.
+3. Copy the generated **API Token**.
 
-### 2. Вимкнення режиму приватності (Group Privacy) — КРИТИЧНО!
-За замовчуванням боти бачать лише команди, що починаються з `/`. Щоб бот міг реєструвати повідомлення учасників спільноти, режим приватності **має бути вимкнено**:
-1. У чаті з **@BotFather** надішліть команду `/setprivacy`.
-2. Оберіть вашого бота з меню.
-3. Натисніть кнопку **Disable**.
+### 2. Disabling Privacy Mode (Group Privacy) — CRITICAL!
+By default, bots only see commands starting with `/`. For the bot to register user messages, privacy mode **must be disabled**:
+1. In the chat with **@BotFather**, send the `/setprivacy` command.
+2. Select your bot from the menu.
+3. Click the **Disable** button.
 
-### 3. Додавання бота в чат/групу
-1. Перейдіть у налаштування вашої групи в Telegram.
-2. Додайте вашого бота до списку учасників.
-3. Обов'язково призначте бота **Адміністратором** групи та надайте йому права на читання/надсилання повідомлень.
+### 3. Adding the bot to the group
+1. Go to your Telegram group settings.
+2. Add your bot as a member.
+3. Make the bot an **Administrator** of the group and grant it permissions to read/send messages.
 
 ---
 
-## 🤝 Контриб'ютори
-Будь-які Pull Requests (PR) дуже вітаються! Створюйте Issue, якщо знаходите баги або хочете додати новий функціонал. 
+## 🤝 Contributors
+Any Pull Requests (PR) are highly welcome! Create an Issue if you find bugs or want to suggest new features.
 
-## 📄 Ліцензія
+## 📄 License
 [MIT License](LICENSE)
 
 <br>
