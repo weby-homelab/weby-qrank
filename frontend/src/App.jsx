@@ -234,7 +234,7 @@ function App() {
 
   return (
     <>
-      <div className="glass-panel header">
+      <div className="top-bar">
         <button 
           className="info-btn" 
           onClick={() => setShowInfo(!showInfo)}
@@ -258,7 +258,9 @@ function App() {
             EN
           </button>
         </div>
+      </div>
 
+      <div className="glass-panel header">
         <div className="header-title-container">
           <h1>{getDisplayTitle()}</h1>
         </div>

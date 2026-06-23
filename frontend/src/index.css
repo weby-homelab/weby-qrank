@@ -793,9 +793,6 @@ button[type="submit"]:active:not(:disabled),
 }
 
 .info-btn {
-  position: absolute;
-  top: 10px;
-  left: 14px;
   background: transparent;
   border: none;
   font-size: 1.15rem;
@@ -999,15 +996,16 @@ button[type="submit"]:active:not(:disabled),
   color: var(--text-main);
 }
 
-/* --- Language Switcher Styling --- */
-.header {
-  padding-top: 2.2rem !important;
+/* --- Top Bar & Language Switcher Styling --- */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  margin-bottom: -0.25rem;
 }
 
 .lang-switcher {
-  position: absolute;
-  top: 10px;
-  right: 14px;
   display: flex;
   align-items: center;
   gap: 2px;
