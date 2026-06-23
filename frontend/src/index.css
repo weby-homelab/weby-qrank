@@ -995,3 +995,51 @@ button[type="submit"]:active:not(:disabled),
   line-height: 1.4;
   color: var(--text-main);
 }
+
+/* --- Language Switcher Styling --- */
+.header {
+  padding-top: 2.2rem !important;
+}
+
+.lang-switcher {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(10px);
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+
+.lang-btn.active {
+  color: var(--accent-primary);
+}
+
+.lang-btn:hover:not(.active) {
+  color: var(--text-main);
+}
+
+.lang-divider {
+  color: var(--glass-border);
+  font-size: 0.72rem;
+  pointer-events: none;
+  user-select: none;
+}
