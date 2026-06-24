@@ -92,7 +92,14 @@ app.get('/api/settings', async (req, res) => {
       if (!isNaN(cleanId) && cleanId.length > 0) {
         // Find by numeric user ID
         ownerInfo = await db.get(
-          'SELECT id, username, first_name, karma, karma_flooder, karma_guru, karma_skeptic FROM users WHERE id = ?',
+          `SELECT 
+            u.id, u.username, u.first_name, u.karma, u.karma_flooder, u.karma_guru, u.karma_skeptic, u.message_count, u.engaged_message_count,
+            (SELECT COUNT(*) FROM replies r WHERE r.author_id = u.id) AS replies_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('😁', '🤣', '🤪')) AS reactions_flooder_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('🔥', '👍', '💯', '🤝', '🫡', '❤️', '❤', '❤️🔥', '👌', '😎')) AS reactions_guru_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('🤔', '👀', '🤷‍♂️', '🤷\u200d♂️', '🤷', '🤯', '😱', '😢', '🙈', '🥴')) AS reactions_skeptic_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('👎', '🤮', '💩')) AS reactions_negative_count
+           FROM users u WHERE u.id = ?`,
           [parseInt(cleanId, 10)]
         );
       }
@@ -104,7 +111,14 @@ app.get('/api/settings', async (req, res) => {
           searchName = searchName.substring(1);
         }
         ownerInfo = await db.get(
-          'SELECT id, username, first_name, karma, karma_flooder, karma_guru, karma_skeptic FROM users WHERE (username <> "" AND LOWER(username) = ?) OR LOWER(first_name) = ?',
+          `SELECT 
+            u.id, u.username, u.first_name, u.karma, u.karma_flooder, u.karma_guru, u.karma_skeptic, u.message_count, u.engaged_message_count,
+            (SELECT COUNT(*) FROM replies r WHERE r.author_id = u.id) AS replies_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('😁', '🤣', '🤪')) AS reactions_flooder_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('🔥', '👍', '💯', '🤝', '🫡', '❤️', '❤', '❤️🔥', '👌', '😎')) AS reactions_guru_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('🤔', '👀', '🤷‍♂️', '🤷\u200d♂️', '🤷', '🤯', '😱', '😢', '🙈', '🥴')) AS reactions_skeptic_count,
+            (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('👎', '🤮', '💩')) AS reactions_negative_count
+           FROM users u WHERE (u.username <> "" AND LOWER(u.username) = ?) OR LOWER(u.first_name) = ?`,
           [searchName.toLowerCase(), searchName.toLowerCase()]
         );
       }
@@ -403,7 +417,16 @@ app.post('/api/admin/upload-json', upload.single('file'), async (req, res) => {
   app.get('/api/leaderboard', async (req, res) => {
   try {
     const db = await getDb();
-    const topUsers = await db.all('SELECT id, username, first_name, karma, karma_flooder, karma_guru, karma_skeptic FROM users ORDER BY karma DESC, join_date ASC, id ASC LIMIT 50');
+    const topUsers = await db.all(
+      `SELECT 
+        u.id, u.username, u.first_name, u.karma, u.karma_flooder, u.karma_guru, u.karma_skeptic, u.message_count, u.engaged_message_count,
+        (SELECT COUNT(*) FROM replies r WHERE r.author_id = u.id) AS replies_count,
+        (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('😁', '🤣', '🤪')) AS reactions_flooder_count,
+        (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('🔥', '👍', '💯', '🤝', '🫡', '❤️', '❤', '❤️🔥', '👌', '😎')) AS reactions_guru_count,
+        (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('🤔', '👀', '🤷‍♂️', '🤷\u200d♂️', '🤷', '🤯', '😱', '😢', '🙈', '🥴')) AS reactions_skeptic_count,
+        (SELECT COUNT(*) FROM reactions rx WHERE rx.author_id = u.id AND rx.emoji IN ('👎', '🤮', '💩')) AS reactions_negative_count
+       FROM users u ORDER BY u.karma DESC, u.join_date ASC, u.id ASC LIMIT 50`
+    );
     res.json(topUsers);
   } catch (error) {
     console.error('Leaderboard error:', error);

@@ -565,6 +565,22 @@ button[type="submit"]:active:not(:disabled),
   color: #ff5858;
 }
 
+.stat-item.negative {
+  color: #ef4444;
+}
+
+.stat-item.messages {
+  color: #94a3b8;
+}
+
+.stat-item.replies {
+  color: #a78bfa;
+}
+
+.stat-item.quality {
+  color: #fb7185;
+}
+
 /* ============================================
    ONBOARDING SCREEN STYLES
    ============================================ */

@@ -379,9 +379,13 @@ function App() {
                       )}
                     </div>
                     <div className="karma-bar-stats">
-                      <span className="stat-item flooder">🎭 {Math.round(settings.owner_info.karma_flooder || 0)}</span>
-                      <span className="stat-item guru">🛠 {Math.round(settings.owner_info.karma_guru || 0)}</span>
-                      <span className="stat-item skeptic">🧐 {Math.round(settings.owner_info.karma_skeptic || 0)}</span>
+                      <span className="stat-item flooder">🎭 {settings.owner_info.reactions_flooder_count || 0}</span>
+                      <span className="stat-item guru">🛠 {settings.owner_info.reactions_guru_count || 0}</span>
+                      <span className="stat-item skeptic">🧐 {settings.owner_info.reactions_skeptic_count || 0}</span>
+                      <span className="stat-item negative">👎 {settings.owner_info.reactions_negative_count || 0}</span>
+                      <span className="stat-item messages">💬 {settings.owner_info.message_count || 0}</span>
+                      <span className="stat-item replies">↪ {settings.owner_info.replies_count || 0}</span>
+                      <span className="stat-item quality">💎 {(((settings.owner_info.engaged_message_count || 0) + 1) / ((settings.owner_info.message_count || 0) + 1)).toFixed(2)}</span>
                     </div>
                   </div>
                   <div className="karma-score">
@@ -439,9 +443,13 @@ function App() {
                         )}
                       </div>
                       <div className="karma-bar-stats">
-                        <span className="stat-item flooder">🎭 {Math.round(flooder)}</span>
-                        <span className="stat-item guru">🛠 {Math.round(guru)}</span>
-                        <span className="stat-item skeptic">🧐 {Math.round(skeptic)}</span>
+                        <span className="stat-item flooder">🎭 {user.reactions_flooder_count || 0}</span>
+                        <span className="stat-item guru">🛠 {user.reactions_guru_count || 0}</span>
+                        <span className="stat-item skeptic">🧐 {user.reactions_skeptic_count || 0}</span>
+                        <span className="stat-item negative">👎 {user.reactions_negative_count || 0}</span>
+                        <span className="stat-item messages">💬 {user.message_count || 0}</span>
+                        <span className="stat-item replies">↪ {user.replies_count || 0}</span>
+                        <span className="stat-item quality">💎 {(((user.engaged_message_count || 0) + 1) / ((user.message_count || 0) + 1)).toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="karma-score">
@@ -514,9 +522,13 @@ function App() {
                 )}
               </div>
               <div className="karma-bar-stats">
-                <span className="stat-item flooder">🎭 {Math.round(flooder)}</span>
-                <span className="stat-item guru">🛠 {Math.round(guru)}</span>
-                <span className="stat-item skeptic">🧐 {Math.round(skeptic)}</span>
+                <span className="stat-item flooder">🎭 {myProfile.reactions_flooder_count || 0}</span>
+                <span className="stat-item guru">🛠 {myProfile.reactions_guru_count || 0}</span>
+                <span className="stat-item skeptic">🧐 {myProfile.reactions_skeptic_count || 0}</span>
+                <span className="stat-item negative">👎 {myProfile.reactions_negative_count || 0}</span>
+                <span className="stat-item messages">💬 {myProfile.message_count || 0}</span>
+                <span className="stat-item replies">↪ {myProfile.replies_count || 0}</span>
+                <span className="stat-item quality">💎 {(((myProfile.engaged_message_count || 0) + 1) / ((myProfile.message_count || 0) + 1)).toFixed(2)}</span>
               </div>
             </div>
             <div className="karma-score">
