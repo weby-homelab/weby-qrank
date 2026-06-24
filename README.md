@@ -14,7 +14,31 @@
   <img src="Karma-2-Screen3.png" width="800" alt="Karma 2 Score Breakdown" />
 </p>
 
-A modern Telegram Mini App for community gamification. This version (Karma 2) is optimized for **Docker** environments, supports easy horizontal scaling (multi-tenancy), serves a static React app, and uses an **advanced karma calculation formula** to prevent boosting and spam.
+🚀 Meet Karma 2 — the evolution of gamification for your Telegram community!
+
+Tired of rating manipulations and meaningless flood?
+
+Want to see real opinion leaders and support quality communication?
+
+Karma 2 is a modern Telegram Mini App that turns chat life into a transparent game protected from spam and manipulation.
+
+⚡️ Why Karma 2 is the new standard:
+
+*   🎨 **Premium OLED Dark UI**: Elegant Bento Grid style design with blurred frosted glass (glassmorphism), mesh-gradients, and cascading loading animations.
+*   ⚖️ **Smart Mathematical Scoring**:
+    *   *Quality Index (Q)* — mass flood without feedback devalues karma.
+    *   *Anti-manipulation* — reaction weights between a pair of users decay over time, blocking collusions.
+    *   *Reactor Reputation* — a like from a veteran user weighs more than from a newcomer.
+    *   *Time Decay* — old messages lose weight (half-life: 30 days), keeping the rating dynamic.
+*   📊 **Interactive Score Breakdown**: Click on any member's card to instantly see the full structure of their rating (number of messages, replies, and reactions across three categories: Guru, Flooder, and Skeptic).
+*   🌐 **Localization UA | EN**: Convenient language switcher in the upper right corner with auto-save of the user's choice.
+*   🐳 **Docker-first Architecture**: Easy launch and scaling of multiple bots in isolated containers using a single configuration file.
+
+---
+
+🔗 Make your chat a place of quality communication with Karma 2!
+
+Open source code, quick start guide, and algorithm documentation are available in the repository: [Karma 2](https://github.com/weby-homelab/karma-2-community-app)
 
 ![Karma 2 Community App Banner](https://img.shields.io/badge/Status-Active-success)  ![License](https://img.shields.io/badge/License-MIT-blue)  ![Stack](https://img.shields.io/badge/Stack-Node.js%20|%20Docker%20|%20SQLite-blueviolet)
 
