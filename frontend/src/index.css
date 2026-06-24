@@ -1068,3 +1068,52 @@ button[type="submit"]:active:not(:disabled),
   pointer-events: none;
   user-select: none;
 }
+
+/* --- Localized File Input --- */
+.file-input-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.file-input-container:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.file-input-btn {
+  padding: 6px 12px;
+  background: var(--bg-surface-hover);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.file-input-btn:hover {
+  background: var(--glass-border);
+}
+
+.file-input-name {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.file-input-name.has-file {
+  color: var(--text-main);
+}

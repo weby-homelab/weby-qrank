@@ -36,6 +36,8 @@ const TRANSLATIONS = {
     settings_saved_success: '✅ Налаштування збережено! Бот перезапускається (зачекайте пару секунд).',
     settings_save_error: '❌ Помилка збереження',
     export_history_label: 'Експорт історії (result.json):',
+    choose_file_btn: 'Вибрати файл',
+    no_file_selected: 'Файл не вибрано',
     select_file_error: 'Будь ласка, оберіть файл.',
     upload_loading: 'Завантаження та обробка...',
     upload_success: '✅ Базу успішно очищено та оновлено з нового файлу!',
@@ -76,6 +78,8 @@ const TRANSLATIONS = {
     settings_saved_success: '✅ Settings saved! The bot is restarting (wait a couple of seconds).',
     settings_save_error: '❌ Failed to save settings',
     export_history_label: 'Chat History Export (result.json):',
+    choose_file_btn: 'Choose File',
+    no_file_selected: 'No file chosen',
     select_file_error: 'Please select a file.',
     upload_loading: 'Uploading and processing...',
     upload_success: '✅ Database cleared and updated from the new file successfully!',
@@ -263,7 +267,37 @@ export default function Admin() {
   const renderStatus = () => {
     if (!status) return null;
     if (status.startsWith('error_prefix')) {
-      return t.error_prefix + status.replace('error_prefix', '');
+      const rawError = status.replace('error_prefix', '');
+      let displayError = rawError;
+      
+      // Parse JSON errors if returned by backend (like multer errors)
+      try {
+        if (rawError.trim().startsWith('{')) {
+          const parsed = JSON.parse(rawError);
+          if (parsed && parsed.error) {
+            displayError = parsed.error;
+          }
+        }
+      } catch (e) {}
+
+      // Translate known backend error messages if language is English
+      if (lang === 'en') {
+        const errorMap = {
+          'Пароль надто короткий': 'Password is too short (minimum 4 characters)',
+          'Пароль вже встановлено': 'Password has already been set',
+          'Помилка сервера': 'Server error',
+          'Адмін-пароль не встановлено. Використовуйте сторінку налаштування.': 'Admin password not configured. Please use the setup page.',
+          'Невірний пароль': 'Incorrect password',
+          'Файл не знайдено': 'File not found',
+          'Файл надто великий. Максимальний розмір: 50MB': 'File is too large. Maximum size is 50MB',
+          'Внутрішня помилка сервера під час обробки файлу': 'Internal server error while processing file',
+          'Будь ласка, оберіть файл.': 'Please select a file.',
+          'Успішно оновлено': 'Updated successfully'
+        };
+        displayError = errorMap[displayError] || displayError;
+      }
+      
+      return t.error_prefix + displayError;
     }
     if (status.startsWith('error_conn_prefix')) {
       return t.error_conn_prefix + status.replace('error_conn_prefix', '');
@@ -428,7 +462,25 @@ export default function Admin() {
           <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <div>
               <label className="admin-label">{t.export_history_label}</label>
-              <input type="file" accept=".json" onChange={(e) => setFile(e.target.files[0])} style={{ width: '100%', padding: '10px' }} />
+              <div className="file-input-container">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('admin-file-upload').click()}
+                  className="file-input-btn"
+                >
+                  {t.choose_file_btn}
+                </button>
+                <span className={`file-input-name ${file ? 'has-file' : ''}`}>
+                  {file ? file.name : t.no_file_selected}
+                </span>
+                <input
+                  id="admin-file-upload"
+                  type="file"
+                  accept=".json"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  style={{ display: 'none' }}
+                />
+              </div>
             </div>
             <button type="submit" disabled={loading} style={{ padding: '12px', background: '#0088cc', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
               {loading ? t.upload_loading : t.upload_btn}
