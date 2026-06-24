@@ -48,3 +48,39 @@ services:
       - TRUST_PROXY=true
     volumes:
       - ./data/kruhlyk-group:/app/backend/data
+  karma-ai-automation-lab:
+    image: webyhomelab/karma-2-community-app:latest
+    container_name: karma-ai-automation-lab
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3024:3000"
+    environment:
+      - DB_PATH=/app/backend/data/karma.db
+      - BOT_TOKEN=DUMMY_TOKEN
+      - TRUST_PROXY=true
+    volumes:
+      - ./data/ai-automation-lab:/app/backend/data
+  karma-flash-chat:
+    image: webyhomelab/karma-2-community-app:latest
+    container_name: karma-flash-chat
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3025:3000"
+    environment:
+      - DB_PATH=/app/backend/data/karma.db
+      - BOT_TOKEN=DUMMY_TOKEN
+      - TRUST_PROXY=true
+    volumes:
+      - ./data/flash-chat:/app/backend/data
+  karma-design-dvizh:
+    image: webyhomelab/karma-2-community-app:latest
+    container_name: karma-design-dvizh
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3026:3000"
+    environment:
+      - DB_PATH=/app/backend/data/karma.db
+      - BOT_TOKEN=DUMMY_TOKEN
+      - TRUST_PROXY=true
+    volumes:
+      - ./data/design-dvizh:/app/backend/data
