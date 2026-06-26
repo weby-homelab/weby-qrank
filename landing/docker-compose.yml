@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  landing-page:
+    build: .
+    container_name: weby-qrank-landing
+    ports:
+      - "3031:80"
+    restart: unless-stopped

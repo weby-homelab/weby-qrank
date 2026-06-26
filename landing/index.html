@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <!-- SEO & Metadata -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weby-QRank — Розумна Репутаційна Система та Рейтинг Активності Telegram Спільнот</title>
+    <meta name="description" content="Сучасна, математично обгрунтована репутаційна система для Telegram спільнот. Захистіть свій чат від накруток та перетворіть спілкування на захопливу гру з прозорими рейтингами.">
+    <meta name="keywords" content="telegram bot, reputation engine, telegram leaderboard, qrank, telegram mini app, chat gamification, weby-qrank, anti-cheat, open source">
+    <meta name="author" content="Weby Homelab">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph (Telegram, Facebook, LinkedIn) -->
+    <meta property="og:title" content="Weby-QRank — Еволюція репутації для Telegram спільнот">
+    <meta property="og:description" content="Розумний математичний скоринг, захист від накруток (anti-cheat), детальна статистика активності та інтерактивні профілі через Telegram Mini App.">
+    <meta property="og:url" content="https://qrank.weby.guru/">
+    <meta property="og:image" content="https://qrank.weby.guru/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Weby-QRank">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Weby-QRank — Telegram Reputation Engine">
+    <meta name="twitter:description" content="Transform your Telegram community with smart mathematical scoring, anti-manipulation protection, and interactive user profiles.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Modern Design System & CSS Custom Properties */
+        :root {
+            --bg-dark: #08090d;
+            --bg-panel: rgba(255, 255, 255, 0.03);
+            --border-glow: rgba(255, 255, 255, 0.05);
+            --cyan-glow: #00f0ff;
+            --purple-glow: #bd00ff;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-dark: #4b5563;
+            --cyan-light: rgba(0, 240, 255, 0.15);
+            --purple-light: rgba(189, 0, 255, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Basic Resets & Layout */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Glow Background Overlays */
+        .ambient-glows {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .glow-cyan {
+            position: absolute;
+            top: -10%;
+            left: 20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--cyan-light) 0%, transparent 70%);
+            filter: blur(80px);
+            animation: pulse-glow 10s infinite alternate;
+        }
+
+        .glow-purple {
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--purple-light) 0%, transparent 70%);
+            filter: blur(100px);
+            animation: pulse-glow 12s infinite alternate-reverse;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.15) translate(30px, -30px); }
+        }
+
+        /* Container & Navigation */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(8, 9, 13, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--cyan-glow), var(--purple-glow));
+            border-radius: 10px;
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-lang {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-lang:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--cyan-glow);
+        }
+
+        .btn-github {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--text-main);
+            color: var(--bg-dark);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-github:hover {
+            background: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 180px 0 80px 0;
+            display: grid;
+            grid-template-cols: 1.1fr 0.9fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan-glow);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 30%, var(--cyan-glow) 70%, var(--purple-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            max-width: 540px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--cyan-glow), var(--purple-glow));
+            color: var(--bg-dark);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.5), 0 0 15px rgba(189, 0, 255, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 16px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        /* Animated Terminal Widget */
+        .terminal-wrapper {
+            background: rgba(12, 13, 20, 0.7);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .term-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .term-red { background-color: #ff5f56; }
+        .term-yellow { background-color: #ffbd2e; }
+        .term-green { background-color: #27c93f; }
+
+        .terminal-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            padding: 20px;
+            height: 320px;
+            overflow-y: auto;
+            color: #d1d5db;
+        }
+
+        .term-line {
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(5px);
+            animation: show-line 0.4s forwards;
+        }
+
+        @keyframes show-line {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .t-cyan { color: var(--cyan-glow); }
+        .t-purple { color: #d946ef; }
+        .t-gray { color: var(--text-muted); }
+        .t-yellow { color: #f59e0b; }
+        .t-red { color: #ef4444; }
+        .t-green { color: #10b981; }
+
+        /* Bento Grid Section */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--cyan-glow);
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .bento-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 32px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 80%, rgba(0, 240, 255, 0.03) 100%);
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.05);
+        }
+
+        .bento-card:hover::before {
+            opacity: 0.8;
+        }
+
+        /* Card Sizes */
+        .bento-card.col-2 {
+            grid-column: span 2;
+        }
+
+        .card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            color: var(--cyan-glow);
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .bento-card:hover .card-icon {
+            color: var(--bg-dark);
+            background: var(--cyan-glow);
+            box-shadow: 0 0 15px var(--cyan-glow);
+            border-color: transparent;
+        }
+
+        .bento-card.purple-theme:hover .card-icon {
+            color: var(--text-main);
+            background: var(--purple-glow);
+            box-shadow: 0 0 15px var(--purple-glow);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        /* Integration & Docker Section */
+        .integration {
+            background: radial-gradient(100% 100% at 50% 0%, rgba(189,0,255,0.02) 0%, transparent 100%);
+            padding: 80px 0;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        .integration-grid {
+            display: grid;
+            grid-template-cols: 1fr 1fr;
+            gap: 64px;
+            align-items: flex-start;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 20px;
+        }
+
+        .step-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan-glow);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Code Block */
+        .docker-config {
+            background: rgba(12, 13, 20, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .docker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.01);
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .docker-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--cyan-glow);
+            background: rgba(0, 240, 255, 0.06);
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-copy:hover {
+            color: var(--text-main);
+        }
+
+        .docker-body {
+            padding: 20px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        .docker-body pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            margin: 0;
+        }
+
+        /* Tech Badges Section */
+        .tech-showcase {
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        .tech-logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 36px;
+        }
+
+        .tech-badge {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .tech-badge:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: #040508;
+            border-top: 1px solid var(--border-glow);
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .ukraine-badge {
+            font-size: 0.85rem;
+            color: #d1d5db;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .hero {
+                grid-template-cols: 1fr;
+                text-align: center;
+                padding-top: 140px;
+                gap: 40px;
+            }
+
+            .hero-badge, .hero-info {
+                align-self: center;
+                align-items: center;
+            }
+
+            .hero-title {
+                font-size: 2.75rem;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bento-card.col-2 {
+                grid-column: span 1;
+            }
+
+            .integration-grid {
+                grid-template-cols: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Multi-language displays */
+        .lang-en { display: none; }
+        .lang-uk { display: block; }
+
+        body.en-mode .lang-en { display: block; }
+        body.en-mode .lang-uk { display: none; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Neon Gradients -->
+    <div class="ambient-glows">
+        <div class="glow-cyan"></div>
+        <div class="glow-purple"></div>
+    </div>
+
+    <!-- Toast Banner -->
+    <div id="toast" class="toast">
+        <span class="lang-uk">Скопійовано!</span>
+        <span class="lang-en">Copied!</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo-area">
+                    <div class="logo-icon">
+                        <i data-lucide="trophy"></i>
+                    </div>
+                    <span class="logo-text">Weby-QRank</span>
+                </a>
+                
+                <ul class="nav-links">
+                    <li><a href="#features"><span class="lang-uk">Можливості</span><span class="lang-en">Features</span></a></li>
+                    <li><a href="#setup"><span class="lang-uk">Встановлення</span><span class="lang-en">Setup</span></a></li>
+                    <li><a href="#docker"><span class="lang-uk">Docker</span><span class="lang-en">Docker</span></a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="btn-lang" onclick="toggleLanguage()" id="lang-toggle-btn">EN</button>
+                    <a href="https://github.com/weby-homelab/Weby-QRank" target="_blank" class="btn-github">
+                        <img src="https://github.com/weby-homelab.png" alt="Weby Homelab" style="width: 18px; height: 18px; border-radius: 50%; object-fit: cover;">
+                        <i data-lucide="github" style="width: 18px; height: 18px;"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-info">
+                <div class="hero-badge">
+                    <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+                    <span>v2.1.4 Release (June 2026)</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="lang-uk">Еволюція репутації вашого чату в <span class="gradient-text">Telegram</span></span>
+                    <span class="lang-en">The Evolution of Reputation for <span class="gradient-text">Telegram</span> Communities</span>
+                </h1>
+                <p class="hero-desc">
+                    <span class="lang-uk">Перетворіть життя чату на прозору, справедливу та захопливу гру за допомогою математично точного скорингу, лімітів накруток та інтерактивних профілів.</span>
+                    <span class="lang-en">Transform chat life into a transparent, fair, and engaging game with smart mathematical scoring, anti-manipulation limits, and interactive user profiles.</span>
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="copyInstallScript()">
+                        <i data-lucide="terminal"></i>
+                        <span class="lang-uk">Docker запуск</span>
+                        <span class="lang-en">Docker run</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terminal Simulator Widget -->
+            <div class="terminal-wrapper">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <div class="term-dot term-red"></div>
+                        <div class="term-dot term-yellow"></div>
+                        <div class="term-dot term-green"></div>
+                    </div>
+                    <div class="terminal-title">qrank_engine.log</div>
+                    <div style="width: 52px;"></div>
+                </div>
+                <div class="terminal-body" id="terminal-screen">
+                    <!-- Lines will be dynamically generated by Javascript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Bento Grid Features Section -->
+        <section id="features" style="padding: 80px 0 40px 0;">
+            <div class="section-header">
+                <div class="section-subtitle">
+                    <span class="lang-uk">Можливості системи</span>
+                    <span class="lang-en">System capabilities</span>
+                </div>
+                <h2 class="section-title">
+                    <span class="lang-uk">Створений для активних чатів</span>
+                    <span class="lang-en">Built for active communities</span>
+                </h2>
+            </div>
+
+            <div class="bento-grid">
+                <!-- Mathematical Scoring Card -->
+                <div class="bento-card col-2">
+                    <div class="card-icon"><i data-lucide="award"></i></div>
+                    <h3 class="card-title">
+                        <span class="lang-uk">Математичний скоринг активності</span>
+                        <span class="lang-en">Mathematical Activity Scoring</span>
+                    </h3>
+                    <p class="card-desc">
+                        <span class="lang-uk">QRank формується на основі надісланих повідомлень, відповідей та реакцій у групі за допомогою зважених коефіцієнтів (Guru, Flooder, Skeptic, Negative). Старі бали поступово згасають із періодом напіврозпаду 30 днів, зберігаючи рейтинг актуальним.</span>
+                        <span class="lang-en">QRank is calculated using messages, replies, and reactions in the group with weighted coefficients (Guru, Flooder, Skeptic, Negative). Score decay with a 30-day half-life keeps the leaderboard fresh and relevant.</span>
+                    </p>
+                </div>
+
+                <!-- Anti-phishing Card -->
+                <div class="bento-card">
+                    <div class="card-icon"><i data-lucide="shield-check"></i></div>
+                    <h3 class="card-title">
+                        <span class="lang-uk">Захист від накруток</span>
+                        <span class="lang-en">Anti-Cheat Protection</span>
+                    </h3>
+                    <p class="card-desc">
+                        <span class="lang-uk">Інтелектуальні ліміти взаємодії (Pairwise interaction limits) автоматично розпізнають та блокують спроби штучного накручування репутації між окремими користувачами або ботами, забезпечуючи чесність топу.</span>
+                        <span class="lang-en">Smart pairwise interaction limits automatically identify and block attempts to artificially boost reputation between specific users or bots, maintaining a fair leaderboard.</span>
+                    </p>
+                </div>
+
+                <!-- Admin Notification Center Card -->
+                <div class="bento-card">
+                    <div class="card-icon"><i data-lucide="smartphone"></i></div>
+                    <h3 class="card-title">
+                        <span class="lang-uk">Telegram Mini App</span>
+                        <span class="lang-en">Telegram Mini App</span>
+                    </h3>
+                    <p class="card-desc">
+                        <span class="lang-uk">Користувачі можуть відкривати інтерактивний рейтинг прямо в чаті, вивчати свій коефіцієнт корисності (Q-Index), бачити статистику своїх реакцій та ділитися результатами завдяки вбудованому Mini App.</span>
+                        <span class="lang-en">Users can open the interactive leaderboard directly inside Telegram, view their quality coefficient (Q-Index), check reaction breakdown, and share stats via the built-in Mini App.</span>
+                    </p>
+                </div>
+
+                <!-- Auto-registration & Architecture Card -->
+                <div class="bento-card col-2 purple-theme">
+                    <div class="card-icon"><i data-lucide="history"></i></div>
+                    <h3 class="card-title">
+                        <span class="lang-uk">Миттєвий імпорт історії чату</span>
+                        <span class="lang-en">Instant Chat History Import</span>
+                    </h3>
+                    <p class="card-desc">
+                        <span class="lang-uk">Ви можете експортувати історію чату з Telegram Desktop у форматі JSON та завантажити її в адмін-панелі для миттєвого наповнення рейтингу. Нові користувачі реєструються автоматично при першій активності.</span>
+                        <span class="lang-en">Export chat history from Telegram Desktop in JSON format and upload it via the admin panel for instant reputation calculation. New chat members register silently upon their first activity.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration / Docker Setup Section -->
+        <section id="setup" class="integration">
+            <div class="section-header">
+                <div class="section-subtitle">
+                    <span class="lang-uk">Швидкий старт</span>
+                    <span class="lang-en">Quick integration</span>
+                </div>
+                <h2 class="section-title">
+                    <span class="lang-uk">Як розпочати роботу?</span>
+                    <span class="lang-en">How to get started?</span>
+                </h2>
+            </div>
+
+            <div class="integration-grid">
+                <!-- Steps Area -->
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <h4>
+                                <span class="lang-uk">Додайте бота до чату</span>
+                                <span class="lang-en">Add Bot to Chat</span>
+                            </h4>
+                            <p>
+                                <span class="lang-uk">Запросіть вашого Telegram-бота в групу як адміністратора, щоб він міг реєструвати повідомлення та реакції.</span>
+                                <span class="lang-en">Invite your Telegram bot to the group as an admin so it can monitor messages and reactions.</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <h4>
+                                <span class="lang-uk">Вимкніть Group Privacy</span>
+                                <span class="lang-en">Disable Group Privacy</span>
+                            </h4>
+                            <p>
+                                <span class="lang-uk">Через `@BotFather` вимкніть Group Privacy та переконайтеся, що в дозволених оновленнях (allowed_updates) ввімкнено `message_reaction`.</span>
+                                <span class="lang-en">Through `@BotFather`, disable Group Privacy and ensure `message_reaction` is enabled in allowed updates.</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <h4>
+                                <span class="lang-uk">Імпортуйте історію</span>
+                                <span class="lang-en">Import Chat History</span>
+                            </h4>
+                            <p>
+                                <span class="lang-uk">Експортуйте історію чату з Telegram Desktop в JSON та завантажте її в адмін-панелі для миттєвого заповнення рейтингу.</span>
+                                <span class="lang-en">Export chat history from Telegram Desktop in JSON format and upload it in the admin panel for instant calculation.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Config Widget -->
+                <div class="docker-config" id="docker">
+                    <div class="docker-header">
+                        <div class="docker-tabs">
+                            <button class="tab-btn active" onclick="switchTab('compose')">docker-compose.yml</button>
+                            <button class="tab-btn" onclick="switchTab('env')">.env</button>
+                        </div>
+                        <button class="btn-copy" onclick="copyConfigCode()">
+                            <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                            <span class="lang-uk">Копіювати</span>
+                            <span class="lang-en">Copy</span>
+                        </button>
+                    </div>
+                    <pre class="docker-body"><code id="code-snippet"></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Badges Section -->
+        <section class="tech-showcase">
+            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted);">
+                <span class="lang-uk">Технологічний стек проекту</span>
+                <span class="lang-en">Built on modern tools</span>
+            </h3>
+            <div class="tech-logos">
+                <div class="tech-badge"><i data-lucide="terminal"></i> Node.js 22+</div>
+                <div class="tech-badge"><i data-lucide="server"></i> Express.js</div>
+                <div class="tech-badge"><i data-lucide="smartphone"></i> React 19</div>
+                <div class="tech-badge"><i data-lucide="database"></i> SQLite</div>
+                <div class="tech-badge"><i data-lucide="container"></i> Docker</div>
+                <div class="tech-badge"><i data-lucide="wind"></i> Tailwind CSS</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <p>© 2026 Weby Homelab. Licensed under GPLv3.</p>
+            <div class="ukraine-badge">
+                Made in Ukraine under air raid sirens & blackouts ⚡ 🇺🇦
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Language toggle logic
+        let currentLang = 'uk';
+        function toggleLanguage() {
+            const body = document.body;
+            const btn = document.getElementById('lang-toggle-btn');
+            if (currentLang === 'uk') {
+                body.classList.add('en-mode');
+                btn.innerText = 'UA';
+                currentLang = 'en';
+            } else {
+                body.classList.remove('en-mode');
+                btn.innerText = 'EN';
+                currentLang = 'uk';
+            }
+            updateTerminalLanguage();
+        }
+
+        // Copy actions
+        function showToast(msgUk, msgEn) {
+            const toast = document.getElementById('toast');
+            toast.innerText = currentLang === 'uk' ? msgUk : msgEn;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function copyInstallScript() {
+            const cmd = "curl -sSL https://qrank.weby.guru/install.sh | bash";
+            navigator.clipboard.writeText(cmd).then(() => {
+                showToast("Команду скопійовано!", "Command copied!");
+            });
+        }
+
+        // Code snippets tabs
+        const snippets = {
+            compose: `version: '3.8'
+
+services:
+  qrank-bot:
+    image: webyhomelab/weby-qrank:latest
+    container_name: qrank_app
+    restart: unless-stopped
+    ports:
+      - "3015:3000"
+    environment:
+      - TZ=Europe/Kyiv
+      - BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+      - TRUST_PROXY=true
+    volumes:
+      - ./data:/app/backend/data`,
+            env: `# Telegram bot credentials from @BotFather
+BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+
+# Server configurations
+TRUST_PROXY=true
+PORT=3000`
+        };
+
+        let currentTab = 'compose';
+        const codeElement = document.getElementById('code-snippet');
+        
+        function updateCodeBlock() {
+            codeElement.textContent = snippets[currentTab];
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const buttons = document.querySelectorAll('.docker-tabs .tab-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(tab)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateCodeBlock();
+        }
+
+        function copyConfigCode() {
+            navigator.clipboard.writeText(snippets[currentTab]).then(() => {
+                showToast("Конфіг скопійовано!", "Config copied!");
+            });
+        }
+
+        // Initialize code block
+        updateCodeBlock();
+
+        // Terminal simulation logic
+        const termLinesUk = [
+            { text: "[INFO] Ініціалізація Weby-QRank...", class: "t-gray" },
+            { text: "[INFO] Підключення до бази даних SQLite... Успішно.", class: "t-green" },
+            { text: "[STATUS] Слухач Telegram оновлень активний.", class: "t-green" },
+            { text: ">>> Отримано реакцію 🔥 від @user134 для повідомлення @oksana_petrova", class: "t-cyan" },
+            { text: "[SCORING] Користувачу @oksana_petrova нараховано +2.00 QRank (тип: Guru).", class: "t-yellow" },
+            { text: ">>> Отримано нове повідомлення від @flooder_boy", class: "t-cyan" },
+            { text: "   \"Привіт усім! Як справи? Що нового в проекті?\"", class: "t-gray" },
+            { text: "[SCORING] Зафіксовано повідомлення від @flooder_boy. Нараховано +0.50 QRank.", class: "t-green" },
+            { text: "[ANTI-CHEAT] Виявлено швидке повторення реакцій від @user134 для @oksana_petrova.", class: "t-yellow" },
+            { text: "[WARN] Спрацював ліміт взаємодії (Pairwise interaction limit). Вагу реакції знижено.", class: "t-red" },
+            { text: ">>> Отримано реакцію 👎 від @skeptic_girl для повідомлення @flooder_boy", class: "t-cyan" },
+            { text: "[SCORING] Нараховано -1.00 QRank (тип: Negative).", class: "t-red" },
+            { text: "[STATUS] Оновлено загальний рейтинг чату. Топ-1: @oksana_petrova (245 🔥).", class: "t-purple" },
+            { text: ">>> Отримано запит профілю через WebApp від @oksana_petrova", class: "t-cyan" },
+            { text: "[API] Відправлено детальні статистичні дані профілю для @oksana_petrova.", class: "t-green" }
+        ];
+
+        const termLinesEn = [
+            { text: "[INFO] Initializing Weby-QRank...", class: "t-gray" },
+            { text: "[INFO] Connecting to SQLite database... Success.", class: "t-green" },
+            { text: "[STATUS] Telegram update listener is active.", class: "t-green" },
+            { text: ">>> Received reaction 🔥 from @user134 for message by @oksana_petrova", class: "t-cyan" },
+            { text: "[SCORING] Awarded +2.00 QRank (type: Guru) to @oksana_petrova.", class: "t-yellow" },
+            { text: ">>> Incoming message from @flooder_boy", class: "t-cyan" },
+            { text: "   \"Hello everyone! How are things going with the project?\"", class: "t-gray" },
+            { text: "[SCORING] Registered new message from @flooder_boy. Awarded +0.50 QRank.", class: "t-green" },
+            { text: "[ANTI-CHEAT] Detected rapid reaction burst from @user134 to @oksana_petrova.", class: "t-yellow" },
+            { text: "[WARN] Pairwise interaction limit triggered. Reaction weight decreased.", class: "t-red" },
+            { text: ">>> Received reaction 👎 from @skeptic_girl for message by @flooder_boy", class: "t-cyan" },
+            { text: "[SCORING] Awarded -1.00 QRank (type: Negative).", class: "t-red" },
+            { text: "[STATUS] Chat leaderboard updated. Top-1: @oksana_petrova (245 🔥).", class: "t-purple" },
+            { text: ">>> Profile request via WebApp from @oksana_petrova", class: "t-cyan" },
+            { text: "[API] Dispatched detailed profile stats to @oksana_petrova.", class: "t-green" }
+        ];
+
+        let lineIdx = 0;
+        const termScreen = document.getElementById('terminal-screen');
+
+        function addTerminalLine() {
+            const currentLines = currentLang === 'uk' ? termLinesUk : termLinesEn;
+            if (lineIdx >= currentLines.length) {
+                termScreen.innerHTML = '';
+                lineIdx = 0;
+            }
+            const line = currentLines[lineIdx];
+            const div = document.createElement('div');
+            div.className = `term-line ${line.class}`;
+            div.innerHTML = line.text;
+            termScreen.appendChild(div);
+            termScreen.scrollTop = termScreen.scrollHeight;
+            lineIdx++;
+            
+            // Random delay between lines to look natural (800ms - 2500ms)
+            const delay = line.text.startsWith('>>>') ? 2200 : (line.text.startsWith('   ') ? 1500 : 900);
+            setTimeout(addTerminalLine, delay);
+        }
+
+        function updateTerminalLanguage() {
+            termScreen.innerHTML = '';
+            lineIdx = 0;
+        }
+
+        // Start terminal simulation
+        setTimeout(addTerminalLine, 1000);
+    </script>
+</body>
+</html>
