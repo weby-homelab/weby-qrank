@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+    <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00f0ff" />
+            <stop offset="100%" stop-color="#bd00ff" />
+        </linearGradient>
+    </defs>
+    <!-- Background shape with gradient -->
+    <rect width="32" height="32" rx="8" fill="url(#grad)" />
+    <!-- Trophy Icon inside, centered -->
+    <g transform="translate(4, 4)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#08090d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+            <path d="M4 22h16" />
+            <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+            <path d="M12 2a6 6 0 0 0-6 6v1c0 3.3 2.7 6 6 6s6-2.7 6-6V8a6 6 0 0 0-6-6z" />
+        </svg>
+    </g>
+</svg>
